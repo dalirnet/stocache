@@ -1,0 +1,2 @@
+# stocache
+local storage cache
