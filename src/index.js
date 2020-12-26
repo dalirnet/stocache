@@ -1,1 +1,1 @@
-export default { myName: 'amir.' }
+export default { myName: 'amir!' }

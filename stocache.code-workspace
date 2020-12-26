@@ -1,6 +1,22 @@
 {
     "folders": [
         {
+            "name": "example",
+            "path": "example"
+        },
+        {
+            "name": "src",
+            "path": "src"
+        },
+        {
+            "name": "lib",
+            "path": "lib"
+        },
+        {
+            "name": "config",
+            "path": "config"
+        },
+        {
             "name": "root",
             "path": "."
         }

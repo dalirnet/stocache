@@ -4,8 +4,10 @@
     "description": "local storage cache",
     "main": "index.js",
     "scripts": {
-        "dev": "webpack --watch --progress --env dev",
-        "build": "webpack --progress --env build"
+        "dev": "concurrently -n build,serve -k \"yarn dev:build\" \"yarn dev:serve\"",
+        "dev:build": "webpack --config config/webpack.js --env development",
+        "dev:serve": "es-dev-server --config config/es-dev-server.js",
+        "build": "webpack --config config/webpack.js --env production"
     },
     "repository": {
         "type": "git",
@@ -33,7 +35,9 @@
         "babel-loader": "^8.2.2",
         "babel-plugin-add-module-exports": "^1.0.4",
         "babel-plugin-transform-class-properties": "^6.24.1",
+        "concurrently": "^5.3.0",
         "cross-env": "^7.0.3",
+        "es-dev-server": "^2.0.2",
         "terser-webpack-plugin": "^5.0.3",
         "webpack": "^5.11.0",
         "webpack-cli": "4",

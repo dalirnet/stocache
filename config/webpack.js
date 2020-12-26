@@ -2,12 +2,13 @@ const path = require('path')
 const terserPlugin = require('terser-webpack-plugin')
 const yargs = require('yargs')
 const env = yargs.argv.env
-const package = require('./package.json')
+const package = require('../package.json')
 
 module.exports = {
-    mode: env === 'build' ? 'production' : 'development',
+    mode: env,
     entry: path.resolve('./src/index.js'),
     devtool: 'source-map',
+    watch: env === 'development',
     watchOptions: {
         ignored: ['node_modules/**'],
     },
