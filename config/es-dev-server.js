@@ -7,6 +7,10 @@ module.exports = {
                 context.url = '/example/index.html'
             }
 
+            if (context.url === '/favicon.ico') {
+                context.url = '/example/favicon.ico'
+            }
+
             return next()
         },
     ],
