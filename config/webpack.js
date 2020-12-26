@@ -38,7 +38,7 @@ module.exports = {
         extensions: ['.json', '.js'],
     },
     optimization: {
-        minimize: true,
+        minimize: env === 'production',
         minimizer: [
             new terserPlugin({
                 terserOptions: {
