@@ -6,7 +6,7 @@
             {
                 "loose": true,
                 "targets": {
-                    "browsers": "last 2 versions, > 0.5%, ie >= 11"
+                    "ie": "11"
                 }
             }
         ]

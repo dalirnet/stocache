@@ -2,11 +2,11 @@
     "name": "stocache",
     "version": "1.0.0",
     "description": "local storage cache",
-    "main": "index.js",
+    "main": "lib/index.js",
     "scripts": {
         "dev": "concurrently -n build,serve -k \"yarn dev:build\" \"yarn dev:serve\"",
         "dev:build": "webpack --config config/webpack.js --env development",
-        "dev:serve": "es-dev-server --config config/es-dev-server.js",
+        "dev:serve": "node config/server.js",
         "build": "webpack --config config/webpack.js --env production"
     },
     "repository": {
@@ -37,10 +37,11 @@
         "babel-plugin-transform-class-properties": "^6.24.1",
         "concurrently": "^5.3.0",
         "cross-env": "^7.0.3",
-        "es-dev-server": "^2.0.2",
+        "live-server": "^1.2.1",
         "terser-webpack-plugin": "^5.0.3",
         "webpack": "^5.11.0",
         "webpack-cli": "4",
         "yargs": "^16.2.0"
-    }
+    },
+    "dependencies": {}
 }

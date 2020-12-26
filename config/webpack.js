@@ -6,6 +6,7 @@ const package = require('../package.json')
 
 module.exports = {
     mode: env,
+    target: 'es5',
     entry: path.resolve('./src/index.js'),
     devtool: 'source-map',
     watch: env === 'development',
