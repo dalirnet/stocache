@@ -50,7 +50,7 @@ const Stocache = (scope = config.scope, exception = config.exception) => {
     })
 
     const storage = (key = scope) => ({
-        set: (value = null, retry = false) => {
+        set: (value = null) => {
             try {
                 localStorage.setItem(key, json(value).encode())
                 return true
@@ -95,20 +95,40 @@ const Stocache = (scope = config.scope, exception = config.exception) => {
             return false
         }
 
-        const clean = (flush = false) => {
-            let unsetStatus = true
+        const clean = ({ flush = false, expireSoon = false } = {}) => {
+            let changed = false
+            let expireSoonKey = null
+            let expireSoonKTime = 0
             for (let key of Object.keys(context)) {
                 if (flush || context[key] < now) {
-                    unsetStatus = unset(key)
+                    changed = true
+                    unset(key)
+                } else if (expireSoon && (expireSoonKTime === 0 || closestItem.value > context[key])) {
+                    changed = true
+                    expireSoonKey = key
+                    expireSoonKTime = context[key]
                 }
             }
-            return unsetStatus && commit()
+            return changed ? unset(expireSoonKey) && commit() : true
         }
 
         const set = (value, ttl) => {
             if (support) {
                 if (scope !== key) {
-                    return storage(keys.storage).set(value, true) ? keep(ttl, true) : false
+                    let writed = storage(keys.storage).set(value)
+                    if (!writed) {
+                        clean()
+                        writed = storage(keys.storage).set(value)
+                    }
+                    if (!writed) {
+                        clean({ expireSoon: true })
+                        writed = storage(keys.storage).set(value)
+                    }
+                    if (!writed) {
+                        clean({ flush: true })
+                        writed = storage(keys.storage).set(value)
+                    }
+                    return writed ? keep(ttl, true) : false
                 } else {
                     if (exception) throw generator(scope).exception('middleware.set', 'KeyConflict')
                 }
@@ -126,7 +146,7 @@ const Stocache = (scope = config.scope, exception = config.exception) => {
         }
 
         const has = (key) => {
-            return clean() && support && context[key] && context[key] >= now
+            return clean() && context[key] && context[key] >= now
         }
 
         const get = (fallback) => {
@@ -147,7 +167,7 @@ const Stocache = (scope = config.scope, exception = config.exception) => {
         has: (key = null) => middleware(key).has(),
         keep: (key = null, ttl = config.ttl) => middleware(key).keep(ttl),
         get: (key = null, fallback = false) => middleware(key).get(fallback),
-        flush: (scope = config.scope) => middleware(scope).clean(true),
+        flush: (scope = config.scope) => middleware(scope).clean({ flush: true }),
         cleanExpired: (scope = config.scope) => middleware(scope).clean(),
     }
 }
