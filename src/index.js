@@ -2,23 +2,25 @@ const config = {
     scope: 'stocache',
     ttl: 3600,
     exception: false,
+    storageType: 'localStorage',
 }
 
 const support = ((key) => {
     try {
-        localStorage.setItem(key, JSON.stringify(true))
-        return JSON.parse(localStorage.getItem(key))
+        window[config.storageType].setItem(key, JSON.stringify(true))
+        return JSON.parse(window[config.storageType].getItem(key))
     } catch (e) {
         return false
     }
 })(config.scope + '-' + 'support')
 
-const Stocache = (scope = config.scope, exception = config.exception) => {
+const Stocache = (scope = config.scope, storageType = config.storageType, exception = config.exception) => {
     const generator = (scope) => ({
         key: (value = scope) => {
+            let input = value === null ? scope : value
             let code = 0
-            for (let i = 0; i < value.length; i++) {
-                code = (code << 5) - code + value.charCodeAt(i)
+            for (let i = 0; i < input.length; i++) {
+                code = (code << 5) - code + input.charCodeAt(i)
                 code = code & code
             }
             return scope + '-' + (code > 0 ? code : 'i' + Math.abs(code))
@@ -52,7 +54,7 @@ const Stocache = (scope = config.scope, exception = config.exception) => {
     const storage = (key = scope) => ({
         set: (value = null) => {
             try {
-                localStorage.setItem(key, json(value).encode())
+                window[storageType].setItem(key, json(value).encode())
                 return true
             } catch ({ message }) {
                 if (exception) throw generator(scope).exception('storage.set', message)
@@ -61,7 +63,7 @@ const Stocache = (scope = config.scope, exception = config.exception) => {
         },
         unset: () => {
             try {
-                localStorage.removeItem(key)
+                window[storageType].removeItem(key)
                 return true
             } catch ({ message }) {
                 if (exception) throw generator(scope).exception('storage.unset', message)
@@ -69,7 +71,7 @@ const Stocache = (scope = config.scope, exception = config.exception) => {
             }
         },
         get: (fallback = false) => {
-            return json(localStorage.getItem(key)).decode(fallback)
+            return json(window[storageType].getItem(key)).decode(fallback)
         },
     })
 
@@ -161,14 +163,12 @@ const Stocache = (scope = config.scope, exception = config.exception) => {
 
     return {
         support,
-        keyGenerator: (key = config.scope) => generator(scope).key(key),
         set: (key = null, value = null, ttl = config.ttl) => middleware(key).set(value, ttl),
         unset: (key = null) => middleware(key).unset(),
         has: (key = null) => middleware(key).has(),
         keep: (key = null, ttl = config.ttl) => middleware(key).keep(ttl),
         get: (key = null, fallback = false) => middleware(key).get(fallback),
         flush: (scope = config.scope) => middleware(scope).clean({ flush: true }),
-        cleanExpired: (scope = config.scope) => middleware(scope).clean(),
     }
 }
 

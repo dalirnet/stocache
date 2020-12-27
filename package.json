@@ -1,8 +1,8 @@
 {
     "name": "stocache",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "local storage cache",
-    "main": "lib/index.js",
+    "main": "index.js",
     "scripts": {
         "dev": "concurrently -n build,serve -k \"yarn dev:build\" \"yarn dev:serve\"",
         "dev:build": "webpack --config config/webpack.js --env development",
