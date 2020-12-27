@@ -42,9 +42,7 @@ module.exports = {
         minimizer: [
             new terserPlugin({
                 terserOptions: {
-                    format: {
-                        comments: false,
-                    },
+                    format: { comments: false },
                 },
                 extractComments: false,
             }),
