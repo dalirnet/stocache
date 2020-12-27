@@ -15,7 +15,7 @@ const support = ((key) => {
 })(config.scope + '-' + 'support')
 
 const Stocache = (scope = config.scope, storageType = config.storageType, exception = config.exception) => {
-    storageType = storageType == 'localStorage' || localStorage == 'sessionStorage' ? storageType : config.storageType
+    storageType = storageType == 'localStorage' || storageType == 'sessionStorage' ? storageType : config.storageType
 
     const generator = (scope) => {
         const key = (value = scope) => {
