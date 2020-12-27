@@ -73,42 +73,47 @@ const Stocache = (scope = config.scope, exception = config.exception) => {
         },
     })
 
-    const middleware = (key, now = Math.floor(Date.now() / 1000)) => {
+    const middleware = (key = scope, now = Math.floor(Date.now() / 1000)) => {
         let keys = {
             shadow: generator(scope).key(),
             storage: generator(scope).key(key),
         }
         let context = storage(keys.shadow).get() || {}
 
+        const commit = () => {
+            if (support) {
+                return storage(keys.shadow).set(context)
+            }
+            return false
+        }
+
+        const unset = (key) => {
+            if (support) {
+                delete context[key]
+                return storage(key).unset()
+            }
+            return false
+        }
+
+        const clean = (flush = false) => {
+            let unsetStatus = true
+            for (let key of Object.keys(context)) {
+                if (flush || context[key] < now) {
+                    unsetStatus = unset(key)
+                }
+            }
+            return unsetStatus && commit()
+        }
+
         const set = (value, ttl) => {
             if (support) {
                 if (scope !== key) {
-                    if (storage(keys.storage).set(value, true)) {
-                        return keep(ttl, true)
-                    }
+                    return storage(keys.storage).set(value, true) ? keep(ttl, true) : false
                 } else {
                     if (exception) throw generator(scope).exception('middleware.set', 'KeyConflict')
                 }
             }
-            return false
-        }
 
-        const unset = () => {
-            if (support) {
-                delete context[keys.storage]
-                return storage(keys.storage).unset() && storage(keys.shadow).set(context)
-            }
-            return false
-        }
-
-        const has = () => {
-            if (support && context[keys.storage]) {
-                if (context[keys.storage] >= now) {
-                    return true
-                } else {
-                    unset()
-                }
-            }
             return false
         }
 
@@ -118,6 +123,10 @@ const Stocache = (scope = config.scope, exception = config.exception) => {
                 return storage(keys.shadow).set(context)
             }
             return false
+        }
+
+        const has = (key) => {
+            return clean() && support && context[key] && context[key] >= now
         }
 
         const get = (fallback) => {
@@ -132,12 +141,14 @@ const Stocache = (scope = config.scope, exception = config.exception) => {
 
     return {
         support,
-        key: (key = config.scope) => generator(scope).key(key),
+        keyGenerator: (key = config.scope) => generator(scope).key(key),
         set: (key = null, value = null, ttl = config.ttl) => middleware(key).set(value, ttl),
         unset: (key = null) => middleware(key).unset(),
         has: (key = null) => middleware(key).has(),
         keep: (key = null, ttl = config.ttl) => middleware(key).keep(ttl),
         get: (key = null, fallback = false) => middleware(key).get(fallback),
+        flush: (scope = config.scope) => middleware(scope).clean(true),
+        cleanExpired: (scope = config.scope) => middleware(scope).clean(),
     }
 }
 
