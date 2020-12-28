@@ -102,6 +102,8 @@ return True on success otherwise False
 cache.flush(SCOPE)
 ```
 
+-   SCOPE default is stocache
+
 #### keep
 
 updating expire time
@@ -109,3 +111,5 @@ updating expire time
 ```javascript
 cache.keep(KEY, TTL)
 ```
+
+-   TTL default is 60
