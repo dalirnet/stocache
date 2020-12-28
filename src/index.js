@@ -1,6 +1,6 @@
 const config = {
     scope: 'stocache',
-    ttl: 3600,
+    ttl: 60,
     exception: false,
     storageType: 'localStorage',
 }
