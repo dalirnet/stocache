@@ -1,33 +1,32 @@
 {
     "name": "stocache",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "description": "local storage cache",
-    "main": "index.js",
+    "keywords": [
+        "localstorage",
+        "stocache",
+        "storage",
+        "sessionstorage",
+        "cache",
+        "iran"
+    ],
+    "homepage": "https://github.com/dalirnet/stocache#readme",
+    "bugs": {
+        "url": "https://github.com/dalirnet/stocache/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dalirnet/stocache.git"
+    },
+    "license": "MIT",
+    "author": "AmirRezaDalir",
+    "main": "lib/index.js",
     "scripts": {
         "dev": "concurrently -n build,serve -k \"yarn dev:build\" \"yarn dev:serve\"",
         "dev:build": "webpack --config config/webpack.js --env development",
         "dev:serve": "node config/server.js",
         "build": "webpack --config config/webpack.js --env production"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/dalirnet/stocache.git"
-    },
-    "keywords": [
-        "localstorage",
-        "stocache",
-        "storage",
-        "localstorage",
-        "sessionstorage",
-        "cache",
-        "iran"
-    ],
-    "author": "AmirRezaDalir",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/dalirnet/stocache/issues"
-    },
-    "homepage": "https://github.com/dalirnet/stocache#readme",
     "devDependencies": {
         "@babel/cli": "^7.12.10",
         "@babel/core": "^7.12.10",
