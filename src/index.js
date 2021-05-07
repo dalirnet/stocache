@@ -146,16 +146,16 @@ const Stocache = (scope = config.scope, storageType = config.storageType, except
         const clean = (flush = false, expireSoon = false) => {
             let changed = false
             let expireSoonKey = null
-            let expireSoonKTime = 0
+            let expireSoonTime = 0
             for (let key of Object.keys(context.object)) {
                 if (flush || context.object[key] < now) {
                     changed = true
                     context.remove(key)
                     storage(key).unset()
-                } else if (expireSoon && (expireSoonKTime === 0 || closestItem.value > context.object[key])) {
+                } else if (expireSoon && (expireSoonTime === 0 || expireSoonTime > context.object[key])) {
                     changed = true
                     expireSoonKey = key
-                    expireSoonKTime = context.object[key]
+                    expireSoonTime = context.object[key]
                 }
             }
             return changed ? unset(expireSoonKey) : true
